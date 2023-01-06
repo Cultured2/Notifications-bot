@@ -1,0 +1,41 @@
+<html>
+import requests
+import json
+
+# Your Discord webhook URL
+DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/..."
+
+# Your TikTok API key
+TIKTOK_API_KEY = "abcdefghijklmnopqrstuvwxyz"
+
+def send_message_to_discord(text):
+  """Sends a message to Discord using the webhook URL."""
+  data = {"content": text}
+  headers = {"Content-Type": "application/json"}
+  requests.post(DISCORD_WEBHOOK_URL, data=json.dumps(data), headers=headers)
+
+def get_tiktok_notifications():
+  """Gets the latest TikTok notifications using the TikTok API."""
+  url = "https://api.tiktok.com/notifications"
+  params = {"api_key": TIKTOK_API_KEY}
+  response = requests.get(url, params=params)
+  if response.status_code == 200:
+    return response.json()
+  else:
+    return []
+
+def main():
+  while True:
+    # Get the latest TikTok notifications
+    notifications = get_tiktok_notifications()
+    
+    # Forward each notification to Discord
+    for notification in notifications:
+      send_message_to_discord(notification["text"])
+      
+    # Wait for a minute before checking for new notifications
+    time.sleep(60)
+
+if __name__ == "__main__":
+  main()
+<\html>
